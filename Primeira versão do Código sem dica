@@ -1,0 +1,141 @@
+# Adicionando a biblioteca 'aleatória'
+import random
+
+
+MAX_TENTATIVAS = 7
+dica_flag = False
+
+# Imprimindo para o usuário Jogo da Forca 
+def imprime_mensagem_abertura():
+    print("Bem vindo ao jogo da Forca!")
+
+# 
+def inicializa_letras_acertadas(palavra):
+    return ["_" for letra in palavra]
+
+def pede_chute():
+    chute = input("Qual letra? ")
+    chute = chute.strip().upper()
+    
+
+    # Declara uma variável como string, obj, tipo
+    isinstance(chute, str) 
+    return chute
+
+
+def marca_chute_correto(chute, letras_acertadas, palavra_secreta):
+    for index, letra in enumerate(palavra_secreta):
+        if (chute == letra):
+            letras_acertadas[index] = letra
+        index += 1
+
+def imprime_mensagem_vencedor():
+    print("Parabéns, você ganhou!")
+    
+# Se o usuário errou tudo, perdeu todas as chances e seu bonequinho foi enforcado, imirpimos o desenho de caveira (peguei com o chat gpt)
+def imprime_mensagem_perdedor(palavra_secreta):
+    print("Puxa, você foi enforcado!")
+    print(f"A palavra era {palavra_secreta}")
+    print("""
+        _______________        
+       /               \\      
+      /                 \\     
+    //                   \\/\\  
+    \\|  XXXX     XXXX   | /   
+     |   XXXX     XXXX   |/    
+     |   XXX       XXX   |     
+     |                   |     
+     \\__     XXX      __/     
+       |\\    XXX     /|       
+       | |           | |       
+       | I I I I I I |        
+       |  I I I I I  |        
+       \\_           _/        
+         \\_______/           
+    """)
+
+    
+# Aqui criamos condições para casos de acerto ou erros, e definimos como as partes do corpinho ficam com erros (essa peguei com o chat gpt)
+def desenha_forca(erros):
+    print("  _______     ")
+    print(" |/      |    ")
+
+    if erros >= 1:
+        print(" |      (_)   ")
+    else:
+        print(" |            ")
+
+    if erros == 2:
+        print(" |       |    ")
+    elif erros == 3:
+        print(" |      \\|    ")
+    elif erros >= 4:
+        print(" |      \\|/   ")
+    else:
+        print(" |            ")
+
+    if erros >= 5:
+        print(" |       |    ")
+    else:
+        print(" |            ")
+
+    if erros == 6:
+        print(" |      /     ")
+    elif erros == 7:
+        print(" |      / \\   ")
+    else:
+        print(" |            ")
+
+    print(" |            ")
+    print("_|___         ")
+    print()
+
+# main
+
+imprime_mensagem_abertura()
+
+palavras = []
+with open("palavras.txt", "r") as arquivo:
+    for linha in arquivo:
+        linha = linha.strip()
+        palavras.append(linha)
+
+numero = random.randint(0, len(palavras)-1)
+palavra_secreta = palavras[numero].upper()
+letras_acertadas = inicializa_letras_acertadas(palavra_secreta)
+
+enforcou = False
+acertou = False
+erros = 0
+letras_faltando = len(letras_acertadas)
+
+print(letras_acertadas)
+while (not acertou and not enforcou):
+
+    chute = pede_chute()
+
+    if (chute in palavra_secreta):
+        marca_chute_correto(chute, letras_acertadas, palavra_secreta)
+        if "_" not in letras_acertadas:
+            print("PARABÉNS!! Você encontrou todas as letras formando a palavra '{}'".format(palavra_secreta.upper()))
+    else:
+        erros += 1
+        print(letras_acertadas)
+        print('Ainda faltam acertar {} letras'.format(letras_faltando))
+        print(f'Você ainda tem {MAX_TENTATIVAS - erros} tentativa(s)')
+        desenha_forca(erros)
+
+    enforcou = erros == MAX_TENTATIVAS
+    acertou = "_" not in letras_acertadas
+
+    print(letras_acertadas)
+
+if (acertou):
+    imprime_mensagem_vencedor()
+else:
+    imprime_mensagem_perdedor(palavra_secreta)
+
+print("Fim do jogo")
+
+
+
