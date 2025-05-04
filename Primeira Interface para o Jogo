@@ -1,1 +1,66 @@
+import pygame
+import sys
+
+# Inicializando o Pygame
+pygame.init()
+
+#  Defino o Tamanho da janela
+largura, altura = 800, 600
+tela = pygame.display.set_mode((largura, altura))
+pygame.display.set_caption("Jogo da Forca - Tela Inicial")
+
+# Cores pra ficar bem lindo
+branco = (255, 255, 255)
+azul_claro = (100, 149, 237)
+azul_escuro = (25, 25, 112)
+
+# Carregando imagem de fundo
+fundo = pygame.image.load("img_inicio.jpg.png")
+fundo = pygame.transform.scale(fundo, (largura, altura))
+
+# Carrega e toca música
+pygame.mixer.music.load("musica.mp3")
+pygame.mixer.music.play(-1)  # -1 = repete infinitamente
+
+# Fonte
+fonte = pygame.font.SysFont("arial", 24)
+
+# Botão
+botao_largura = 200
+botao_altura = 50
+botao_x = (largura - botao_largura) // 2
+botao_y = 500
+
+def desenhar_botao(texto, x, y, largura, altura):
+    for i in range(altura):
+        # Faz um degradê de cima (azul claro) pra baixo (azul escuro) / Essa gradiente é importante pra os efeitos visuais
+        r = azul_claro[0] + int((azul_escuro[0] - azul_claro[0]) * (i / altura))
+        g = azul_claro[1] + int((azul_escuro[1] - azul_claro[1]) * (i / altura))
+        b = azul_claro[2] + int((azul_escuro[2] - azul_claro[2]) * (i / altura))
+        pygame.draw.line(tela, (r, g, b), (x, y + i), (x + largura, y + i))
+    
+    pygame.draw.rect(tela, branco, (x, y, largura, altura), 2)  # borda branca
+    texto_render = fonte.render(texto, True, branco)
+    tela.blit(texto_render, (x + (largura - texto_render.get_width()) // 2,
+                             y + (altura - texto_render.get_height()) // 2))
+
+def tela_inicial():
+    while True:
+        tela.blit(fundo, (0, 0))
+        desenhar_botao("COMEÇAR", botao_x, botao_y, botao_largura, botao_altura)
+        pygame.display.update()
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if botao_x <= evento.pos[0] <= botao_x + botao_largura and \
+                   botao_y <= evento.pos[1] <= botao_y + botao_altura:
+                    print("Jogo começando...")  # Aqui entra o resto do jogo depois
+                    return
+
+# Inicia a tela
+tela_inicial()
 
